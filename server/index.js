@@ -1,16 +1,17 @@
-const express = require("express");
+"use strict";
+
 const path = require("path");
-const app = require("./src/app");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
+
 const http = require("http");
+const app = require("./src/app");
 const socket = require("./src/socket");
 
-const server = http.createServer(app);
-const publicStatic = express.static(path.join(__dirname, "public"));
-
 const port = Number(process.env.HTTP_PORT) || 3003;
+const server = http.createServer(app);
 
 socket.init(server);
 
 server.listen(port, () => {
-    console.log(`Robot server running at http://localhost:${port}/`);
+  console.log(`Robot server running at http://localhost:${port}/`);
 });
