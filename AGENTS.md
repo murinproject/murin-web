@@ -84,3 +84,17 @@ Use this workflow whenever source code is changed. Skip an item only when it cle
 
 - Update `server/README.md` when Socket.IO namespaces, rooms, events, payloads, configuration, or operational behavior changes.
 - In the final response, state what changed, which checks ran, what could not run, and whether browser, serial, or robot hardware behavior remains unverified. Do not describe syntax checks or mocked behavior as end-to-end hardware validation.
+
+## ROS bridge and current operating modes
+
+- `ROBOT_TRANSPORT=serial` uses `robot_link.js` and the console link. `ROBOT_TRANSPORT=socket` uses `robot_socket.js` and opens neither serial device. Keep this selection exclusive.
+- The socket backend accepts one robot source on `/robot`. C++ ROS hardware owns the serial device; a separate Python ROS service registers and forwards telemetry. Read `../murin-ros2/AGENTS.md` for cross-repository edits.
+- Default HTTP/bridge port is 9091; verify the effective `HTTP_PORT` and `server_url` rather than assuming localhost or a port. Never read or print unrelated `.env` secrets during diagnosis.
+- Preserve source registration acknowledgement, hardware-connected status, finite ±0.5 m/s wheel commands, and disconnect/estop forwarding. A dashboard disconnect latches the ROS bridge stop; passive diagnostics should use ordinary HTTP or ROS subscriptions rather than temporary dashboard clients.
+- Do not start direct serial mode while ROS owns `/dev/murin-cdc`. ESP32 resets leave the current ROS hardware driver inactive until a clean restart. Starting a second controller manager is not recovery.
+- Run `scripts/start-server.sh --check` (or the PowerShell wrapper) for configuration validation without starting the server. Socket mode requires no USB/console settings. `--check` does not prove the selected device or robot is healthy.
+- In addition to `npm test` and `npm run format:check`, run `node --test server/test/robot_socket.test.js` for socket changes and `python3 -m unittest discover -s scripts/tests -v` for launcher changes. Use the ROS PTY integration test for changes to both sides of the bridge.
+
+## Script platform parity
+
+Keep `.sh` and `.ps1` wrappers for portable development workflows synchronized by delegating to the same Python implementation. Forward all arguments and preserve exit codes. Test the shared implementation and shell wrappers; report when PowerShell is unavailable. Firmware udev setup is Linux-only. `murin-ros2` intentionally uses only `.sh` wrappers; do not add PowerShell versions there.

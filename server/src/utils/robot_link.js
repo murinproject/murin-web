@@ -187,11 +187,7 @@ function parserConfigPort() {
 class RobotLink {
   constructor(namespace, options = {}) {
     this.namespace = namespace;
-    this.port =
-      options.port ||
-      process.env.IMU_PORT ||
-      parserConfigPort() ||
-      process.env.USB_PORT;
+    this.port = options.port || process.env.USB_PORT || parserConfigPort();
     this.baudRate =
       Number(options.baudRate || process.env.USB_BAUDRATE) || 2000000;
     this.parser = new FrameParser();

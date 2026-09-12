@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "nodemon server/index.js",
-    "format": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/format-all.ps1",
-    "format:check": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/format-all.ps1 -Check",
-    "test": "node --check server/index.js && node --check server/src/socket/index.js && node --check server/src/utils/robot_link.js && node --check server/src/utils/console_link.js && node --check server/public/js/terminal.js"
+    "format": "python3 scripts/tools/format-all.py",
+    "format:check": "python3 scripts/tools/format-all.py --check",
+    "test": "node --check server/index.js && node --check server/src/socket/index.js && node --check server/src/utils/robot_link.js && node --check server/src/utils/robot_socket.js && node --check server/src/utils/console_link.js && node --check server/public/js/terminal.js"
   },
   "dependencies": {
     "dotenv": "^16.3.1",

@@ -1,10 +1,11 @@
 const { Server } = require("socket.io");
 const { createRobotLink } = require("../utils/robot_link");
 const { createConsoleLink } = require("../utils/console_link");
+const { createRobotSocket } = require("../utils/robot_socket");
 
 let io;
 
-function init(httpServer) {
+function init(httpServer, options = {}) {
   io = new Server(httpServer, {
     cors: {
       origin: "*",
@@ -14,8 +15,12 @@ function init(httpServer) {
   const robot = io.of("/robot");
   const system = io.of("/system");
 
-  createRobotLink(robot);
-  createConsoleLink(robot);
+  if (options.robotTransport === "serial") {
+    createRobotLink(robot);
+    createConsoleLink(robot);
+  } else if (options.robotTransport === "socket") {
+    createRobotSocket(robot);
+  }
 
   robot.on("connection", (socket) => {
     console.log("Robot client connected");
